@@ -1,7 +1,7 @@
-import sys
+# utils.py – вспомогательные функции
 
 def gf_mul(a, b, poly=0x11b):
-    """Умножение в GF(2^8) с полиномом poly (по умолчанию для AES)"""
+    """Умножение в GF(2^8) с полиномом poly (по умолчанию 0x11B для AES)"""
     res = 0
     for _ in range(8):
         if b & 1:
@@ -20,6 +20,8 @@ def pad(data, block_size):
 
 def unpad(data):
     """Удаление PKCS#7"""
+    if not data:
+        raise ValueError("Нет данных для распаковки")
     pad_len = data[-1]
     if pad_len < 1 or pad_len > len(data):
         raise ValueError("Некорректное дополнение")
@@ -28,5 +30,6 @@ def unpad(data):
     return data[:-pad_len]
 
 def hex_key_to_bytes(key_hex):
-    """Преобразование hex-строки в байты"""
+    """Преобразование hex-строки в байты, удаляя возможные пробелы"""
+    key_hex = key_hex.strip().replace(' ', '')
     return bytes.fromhex(key_hex)
